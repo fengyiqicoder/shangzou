@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>上奏 · 给嘉靖、康熙、雍正写一道折子</title>
+<meta name="description" content="选一位皇帝，写一道奏折，等一句朱批。按明清真实体例竖排、抬头、朱批，AI 扮演嘉靖、康熙、雍正。">
+<meta property="og:title" content="上奏 · 给皇帝写一道折子">
+<meta property="og:description" content="嘉靖批红、康熙朱批、雍正骂人。按明清真实体例，等皇帝亲笔回你。">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=LXGW+WenKai+TC:wght@400;700&family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@400;600;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header class="top">
+  <h1 class="brand"><span>上</span><span>奏</span></h1>
+  <p class="tagline">择一位皇帝，写一道折子，等一句朱批。</p>
+</header>
+
+<main>
+  <section id="setup" class="sheet">
+    <h2 class="step"><i>一</i>择主</h2>
+    <div class="emperors" id="emperors" role="radiogroup" aria-label="选择皇帝"></div>
+
+    <h2 class="step"><i>二</i>具衔</h2>
+    <div class="fields">
+      <label>年份<select id="year"></select></label>
+      <label>官职<select id="office"></select></label>
+      <label class="custom-office" hidden>自拟官职<input id="officeCustom" maxlength="16" placeholder="如：杭州府同知"></label>
+      <label>姓名<input id="name" maxlength="6" placeholder="如：海瑞" autocomplete="off"></label>
+      <label class="banner-field">旗籍<select id="banner"><option value="0">汉臣（自称「臣」）</option><option value="1">旗人（自称「奴才」）</option></select></label>
+      <label>文书<select id="doctype"></select></label>
+    </div>
+    <p class="fine" id="docHint"></p>
+
+    <h2 class="step"><i>三</i>陈事</h2>
+    <div class="examples" id="examples"></div>
+    <textarea id="content" rows="5" maxlength="800" placeholder="用白话写你要奏的事，师爷会替你誊成文言。"></textarea>
+    <div class="actions">
+      <button class="btn primary" id="draftBtn">请师爷誊抄</button>
+      <button class="btn ghost" id="directBtn" title="不改一字，照你写的原样上奏">原话直呈</button>
+    </div>
+  </section>
+
+  <section id="desk" hidden>
+    <div class="desk-bar">
+      <span id="deskStatus" class="desk-status"></span>
+      <label class="toggle"><input type="checkbox" id="judou" checked> 句读</label>
+    </div>
+    <div class="scroller" id="scroller"><div class="zhe" id="zhe"></div></div>
+    <p class="scroll-hint">← 折子自右向左展开，可左右拖动</p>
+    <div class="edit-wrap" id="editWrap" hidden>
+      <textarea id="editText" rows="6"></textarea>
+    </div>
+    <div class="actions" id="draftActions" hidden>
+      <button class="btn seal" id="submitBtn">封折上奏</button>
+      <button class="btn ghost" id="editBtn">改稿</button>
+      <button class="btn ghost" id="redraftBtn">重新誊抄</button>
+      <button class="btn ghost" id="backBtn">回去改</button>
+    </div>
+    <div id="result" class="result" hidden>
+      <div class="outcome" id="outcome"></div>
+      <div class="result-body">
+        <p class="baihua" id="baihua"></p>
+        <p class="note" id="note"></p>
+        <div class="actions">
+          <button class="btn primary" id="againBtn">再上一本</button>
+          <button class="btn ghost" id="saveBtn">存为图片</button>
+          <button class="btn ghost" id="copyBtn">复制批语</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <details class="sheet about">
+    <summary>体例说明：这道折子为什么长这样</summary>
+    <ul>
+      <li><b>竖写、自右向左。</b>清代奏折用素纸经折装，每幅六行，每行十八字左右；不加标点，这里的句读小点是给今人看的，可以关掉。</li>
+      <li><b>抬头。</b>写到「皇上」「聖恩」「諭旨」一类字眼，另起一行，并高出正文两格（双抬），以示尊敬。</li>
+      <li><b>「臣」字偏书。</b>自称的「臣」「奴才」写得小一点、偏在右侧，以示谦卑。清代旗人自称「奴才」，汉官自称「臣」。</li>
+      <li><b>明代：票拟与批红。</b>嘉靖朝的本章经通政使司、会极门送入，由内阁首辅用墨笔拟票，再由司礼监太监照皇帝意思用朱笔批在本面。皇帝不想表态，就「留中不发」。</li>
+      <li><b>清代：奏折与朱批。</b>奏折装匣递到奏事处，直达御前，皇帝亲笔朱批后发还。康熙朝密折只给少数亲信；雍正即位后令朱批奏折一律缴回宫中。</li>
+      <li><b>军机处。</b>雍正七年（1729）因西北用兵才设立。所以只有雍正七年以后的折子，流转路线里才有军机处；嘉靖、康熙两朝都没有。</li>
+      <li>皇帝由 AI 扮演，批语是模拟的，不是真实档案。</li>
+    </ul>
+  </details>
+</main>
+
+<div class="flow" id="flow" hidden aria-live="polite">
+  <div class="flow-box">
+    <div class="flow-head" id="flowHead"></div>
+    <div class="flow-art" id="flowArt">
+      <div class="box-lid"></div>
+      <div class="box-body"><span class="box-seal">封</span></div>
+      <div class="brush"></div>
+      <div class="candle"><i></i></div>
+    </div>
+    <ol class="route" id="route"></ol>
+    <div class="flow-cap" id="flowCap"></div>
+    <div class="flow-err" id="flowErr" hidden>
+      <p id="flowErrMsg"></p>
+      <button class="btn primary" id="retryBtn">重新递折</button>
+      <button class="btn ghost" id="cancelBtn">收回</button>
+    </div>
+  </div>
+</div>
+
+<footer class="foot">
+  <a href="https://github.com/fengyiqicoder/shangzou">GitHub</a> ·
+  一个静态页面，AI 由 <a href="https://onetagai.com">OneTag AI</a> 一行 script 提供
+</footer>
+
+<script src="config.js"></script>
+<script src="https://onetagai.com/v1.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" defer></script>
+<script src="data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
