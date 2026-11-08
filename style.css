@@ -19,6 +19,8 @@
 * { box-sizing: border-box; }
 [hidden] { display: none !important; }
 html, body { margin: 0; }
+html { -webkit-text-size-adjust: 100%; }
+button, .chip, .emp, select, label { -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
 body {
   background:
     radial-gradient(1200px 600px at 50% -10%, rgba(120, 60, 30, 0.35), transparent 70%),
@@ -83,7 +85,7 @@ main { max-width: 980px; margin: 0 auto; padding: 16px; }
 .fields { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px 14px; }
 .fields label { display: flex; flex-direction: column; font-size: 13px; color: var(--ink2); gap: 4px; }
 select, input, textarea {
-  font: inherit; font-size: 15px; color: var(--ink); background: rgba(255, 255, 255, 0.65);
+  font: inherit; font-size: 16px; color: var(--ink); background: rgba(255, 255, 255, 0.65);
   border: 1px solid rgba(60, 40, 20, 0.28); border-radius: 3px; padding: 8px 10px; width: 100%;
 }
 select:focus, input:focus, textarea:focus { outline: 2px solid rgba(194, 42, 28, 0.5); outline-offset: 0; border-color: var(--zhu); }
@@ -263,23 +265,6 @@ textarea { resize: vertical; line-height: 1.7; }
 .flow-err .btn.ghost { color: #e5d6b6; }
 .flow-err .btn { margin: 0 4px; }
 
-@media (max-width: 720px) {
-  :root { --cell: 20px; }
-  .brand { font-size: 64px; }
-  .sheet { padding: 18px 16px 20px; }
-  .emperors { grid-template-columns: 1fr; }
-  .emp { flex-direction: row; flex-wrap: wrap; align-items: baseline; column-gap: 10px; }
-  .emp .era { font-size: 32px; }
-  .emp p { flex-basis: 100%; }
-  .fields { grid-template-columns: 1fr 1fr; }
-  .result { grid-template-columns: 1fr; justify-items: start; padding: 18px; }
-  .outcome { writing-mode: horizontal-tb; transform: rotate(-3deg); }
-  .route li { max-width: 52px; font-size: 10px; }
-  .route i { width: 30px; height: 30px; font-size: 14px; }
-  .route li::before { top: 14px; }
-  .route b { white-space: normal; line-height: 1.2; }
-  .flow-cap { font-size: 18px; }
-}
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
 }
@@ -287,3 +272,76 @@ textarea { resize: vertical; line-height: 1.7; }
 /* 存图时取动画终态 */
 .snap .ch, .snap .ch::before { animation: none !important; opacity: 1 !important; filter: none !important; }
 .snap .slip { animation: none !important; }
+
+.emp-note { display: none; }
+
+/* ---------- 手机 ---------- */
+@media (max-width: 720px) {
+  :root { --cell: 20px; }
+  .sheet { padding: 18px 16px 20px; }
+  .top { padding: calc(20px + env(safe-area-inset-top)) 16px 4px; }
+  .brand { font-size: 56px; }
+  .brand span:last-child::after { font-size: 12px; }
+  .tagline { font-size: 14px; margin-top: 8px; letter-spacing: 0.06em; }
+  main { padding: 12px 12px calc(12px + env(safe-area-inset-bottom)); }
+  .step { margin: 20px 0 10px; font-size: 17px; }
+
+  /* 三位皇帝：一排三个小签，选中的说明放下面 */
+  .emperors { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .emp { flex-direction: column; align-items: center; padding: 14px 4px 10px; text-align: center; gap: 0; }
+  .emp .era { font-size: 30px; }
+  .emp .who { font-size: 11px; font-weight: 400; color: var(--ink2); }
+  .emp .reign, .emp p { display: none; }
+  .emp[aria-checked="true"]::after { top: 6px; right: 6px; width: 20px; height: 20px; font-size: 12px; }
+  .emp-note { display: block; margin: 10px 2px 0; font-size: 13px; color: var(--ink2); line-height: 1.6; }
+  .emp-note b { color: var(--ink); font-weight: 600; }
+
+  /* 表单：官职、自拟官职占整行 */
+  .fields { grid-template-columns: 1fr 1fr; grid-template-areas: "year doc" "office office" "name banner" "custom custom"; gap: 10px; }
+  .f-year { grid-area: year; } .f-doc { grid-area: doc; } .f-office { grid-area: office; }
+  .f-custom { grid-area: custom; } .f-name { grid-area: name; } .f-banner { grid-area: banner; }
+  select, input, textarea { padding: 10px; }
+  .examples { flex-wrap: nowrap; overflow-x: auto; margin: 0 -16px 10px; padding: 0 16px 4px; scrollbar-width: none; }
+  .examples::-webkit-scrollbar { display: none; }
+  .chip { flex: none; padding: 6px 14px; font-size: 14px; }
+
+  .actions { gap: 8px; }
+  .actions .btn { flex: 1 1 0; padding: 13px 8px; font-size: 16px; letter-spacing: 0.06em; }
+  #setup .actions { position: sticky; bottom: 0; margin: 14px -16px -20px; padding: 12px 16px calc(12px + env(safe-area-inset-bottom)); background: linear-gradient(rgba(243, 234, 214, 0), var(--paper) 30%); }
+  #draftActions { display: grid; grid-template-columns: 1fr 1fr 1fr; }
+  #draftActions[hidden] { display: none !important; }
+  #draftActions .btn.seal { grid-column: 1 / -1; font-size: 18px; padding: 15px; }
+  #draftActions .btn.ghost { font-size: 14px; padding: 10px 4px; }
+
+  /* 折子 */
+  .desk-bar { margin: 0 4px 6px; font-size: 13px; }
+  .scroller { padding: 10px 0 16px; margin: 0 -12px; scroll-snap-type: x proximity; -webkit-overflow-scrolling: touch; }
+  .scroller .panel { scroll-snap-align: start; }
+  .scroll-hint { margin-top: -2px; }
+  .edit-wrap textarea { font-size: 16px; }
+
+  /* 结果 */
+  .result { grid-template-columns: 1fr; justify-items: start; margin-top: 16px; padding: 18px 16px; gap: 14px; }
+  .outcome { writing-mode: horizontal-tb; transform: rotate(-3deg); font-size: 24px; padding: 10px 14px; }
+  .result-body { width: 100%; }
+  .baihua { font-size: 16px; }
+  .result-body .actions .btn { padding: 12px 4px; font-size: 15px; }
+
+  /* 流转动画：站名只显示当前一站 */
+  .flow { padding: 16px 12px calc(16px + env(safe-area-inset-bottom)); }
+  .flow-head { font-size: 13px; padding: 0 8px; }
+  .flow-art { transform: scale(0.85); margin: 0 auto; }
+  .route li { max-width: none; }
+  .route li b { position: absolute; top: 40px; opacity: 0; transition: opacity 0.3s; font-size: 12px; white-space: nowrap; }
+  .route li.on b { opacity: 1; color: #f1e4c6; }
+  .route i { width: 30px; height: 30px; font-size: 14px; }
+  .route li::before { top: 14px; }
+  .route .t { top: -17px; }
+  .flow-cap { font-size: 19px; margin-top: 34px; padding: 0 8px; }
+  .flow-err .btn { margin: 6px 4px; }
+  .foot { padding-bottom: calc(24px + env(safe-area-inset-bottom)); }
+}
+@media (max-width: 360px) {
+  :root { --cell: 18px; }
+  .emp .era { font-size: 26px; }
+}

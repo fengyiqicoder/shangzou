@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>上奏 分享图</title>
+<link href="https://fonts.googleapis.com/css2?family=LXGW+WenKai+TC:wght@400;700&family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  /* 1200×630，给 X / 微信等抓取的分享预览图。用无头 Chrome 截成 og.png */
+  html, body { margin: 0; }
+  body {
+    width: 1200px; height: 630px; overflow: hidden; position: relative;
+    background:
+      radial-gradient(700px 420px at 30% 20%, rgba(130, 64, 30, 0.45), transparent 70%),
+      repeating-linear-gradient(92deg, rgba(255, 255, 255, 0.015) 0 2px, transparent 2px 9px),
+      linear-gradient(180deg, #2a1c16, #160f0c);
+    font-family: "Noto Serif SC", serif; color: #f1e4c6;
+  }
+  .left { position: absolute; left: 80px; top: 92px; width: 520px; }
+  .brand { font-family: "Ma Shan Zheng", serif; font-size: 200px; line-height: 1; letter-spacing: 0.08em; display: flex; align-items: flex-end; text-shadow: 0 4px 0 rgba(0, 0, 0, 0.45); }
+  .seal { writing-mode: vertical-rl; font-family: "LXGW WenKai TC", serif; font-weight: 700; font-size: 26px; background: #c22a1c; color: #fbe9dc; padding: 8px 4px; border-radius: 3px; transform: rotate(5deg); margin: 0 0 22px -6px; letter-spacing: 0; }
+  .line1 { margin-top: 30px; font-size: 38px; font-weight: 600; letter-spacing: 0.06em; }
+  .line2 { margin-top: 12px; font-size: 26px; color: #cbb895; letter-spacing: 0.08em; }
+  .emps { margin-top: 34px; display: flex; gap: 12px; }
+  .emps span { font-family: "Ma Shan Zheng", serif; font-size: 32px; padding: 4px 16px; border: 1.5px solid rgba(241, 228, 198, 0.35); border-radius: 4px; }
+  .url { position: absolute; left: 80px; bottom: 44px; font-size: 20px; color: #9c8a6c; letter-spacing: 0.04em; }
+
+  .zhe { position: absolute; right: 70px; top: 58px; display: flex; flex-direction: row-reverse; transform: rotate(-2.5deg); filter: drop-shadow(0 22px 30px rgba(0, 0, 0, 0.6)); }
+  .panel { width: 250px; height: 500px; padding: 26px 14px; display: flex; flex-direction: row-reverse; background: linear-gradient(to left, rgba(0, 0, 0, 0.08), transparent 8%, transparent 92%, rgba(255, 255, 255, 0.4)), #f3ead6; }
+  .panel + .panel { box-shadow: inset -1px 0 0 rgba(80, 60, 30, 0.2); }
+  .col { width: 37px; display: flex; flex-direction: column; align-items: center; font-family: "LXGW WenKai TC", serif; font-size: 23px; line-height: 25px; color: #1f1a16; }
+  .col span { height: 25px; }
+  .col .sm { font-size: 15px; transform: translateX(6px); }
+  .col.low { padding-top: 50px; }
+  .col.zhu { width: 56px; color: #c22a1c; font-weight: 700; font-size: 36px; line-height: 40px; text-shadow: 0 0 1px rgba(194, 42, 28, 0.5); }
+  .col.zhu span { height: 42px; }
+  .col.zhu span:nth-child(3n) { transform: rotate(3deg) translateX(2px); }
+  .col.zhu span:nth-child(4n) { transform: rotate(-3deg) translateX(-2px); }
+</style>
+</head>
+<body>
+  <div class="left">
+    <div class="brand">上奏<span class="seal">御覽</span></div>
+    <div class="line1">给皇帝写一道折子</div>
+    <div class="line2">等他亲笔朱批：准、驳，还是骂你一顿</div>
+    <div class="emps"><span>嘉靖</span><span>康熙</span><span>雍正</span></div>
+  </div>
+  <div class="url">shangzou.000ooo.ooo</div>
+
+  <div class="zhe" id="zhe"></div>
+
+<script>
+  // 正文（每列一个字符串，"|"开头的列为抬头列，"~"开头为低一格的列；"奴才"写小字偏右）
+  const body = [
+    "~奴才謹奏為據實陳明事竊",
+    "~奴才到任以來清查庫項",
+    "~虧空甚鉅不敢粉飾謹",
+    "~據實陳明伏乞",
+    "|皇上睿鑒謹奏",
+  ];
+  const zhupi = ["朕就是這樣漢子", "就是這樣秉性", "就是這樣皇帝"];
+  const zhe = document.getElementById("zhe");
+  const p1 = document.createElement("div"); p1.className = "panel";
+  const p2 = document.createElement("div"); p2.className = "panel";
+  zhe.append(p1, p2);
+  body.forEach((line) => {
+    const col = document.createElement("div");
+    col.className = "col" + (line[0] === "~" ? " low" : "");
+    const text = line.slice(1);
+    for (let i = 0; i < text.length; i++) {
+      const s = document.createElement("span");
+      s.textContent = text[i];
+      if (text.startsWith("奴才", i) || (i > 0 && text.startsWith("奴才", i - 1) && text[i] === "才")) s.className = "sm";
+      col.append(s);
+    }
+    p1.append(col);
+  });
+  zhupi.forEach((line) => {
+    const col = document.createElement("div");
+    col.className = "col zhu";
+    for (const ch of line) { const s = document.createElement("span"); s.textContent = ch; col.append(s); }
+    p2.append(col);
+  });
+</script>
+</body>
+</html>

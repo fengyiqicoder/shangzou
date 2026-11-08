@@ -2,7 +2,7 @@
 
 给嘉靖、康熙、雍正写一道折子，等皇帝亲笔回你。
 
-**在线体验：https://fengyiqicoder.github.io/shangzou/**
+**在线体验：https://shangzou.000ooo.ooo/**
 
 ![雍正朱批：田文鏡這奴才做事倒也勤懇……](screenshots/shot-yongzheng.jpg)
 
@@ -50,6 +50,7 @@
 | `app.js` | 竖排排版（抬头、偏书、句读）、调用 AI、流转动画、朱批书写动画 |
 | `style.css` | 宣纸、折匣、朱砂 |
 | `config.js` | OneTag AI key |
+| `og.html` → `og.jpg` | 分享预览图（1200×630），用无头 Chrome 截图生成 |
 
 ## 自己部署一份
 

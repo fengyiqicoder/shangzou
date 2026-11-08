@@ -68,7 +68,9 @@
     });
     const ys = $("#year");
     ys.innerHTML = "";
-    for (let y = 1; y <= e.years; y++) ys.add(new Option(`${e.era}${yearName(y)}（${e.firstAD + y - 1}）`, y));
+    for (let y = 1; y <= e.years; y++) ys.add(new Option(`${yearName(y)}（${e.firstAD + y - 1}）`, y));
+    $("#yearLabel").textContent = e.era + "年间";
+    $("#empNote").innerHTML = `<b>${e.title} ${e.personal}</b> · 在位 ${e.reign}<br>${e.blurb}`;
     ys.value = e.defaultYear;
     fillOffices();
     $(".banner-field").hidden = e.tone !== "qing";
@@ -224,7 +226,11 @@
     // 正文
     const body = layout(state.body, 20, 2, true);
     const items = body.cols.map((col) => ({ node: colEl(col, "body"), w: 1 }));
-    if (opts.cursor && body.flat.length) body.flat[body.flat.length - 1].el.classList.add("cursor");
+    if (opts.cursor && body.flat.length) {
+      const last = body.flat[body.flat.length - 1].el;
+      last.classList.add("cursor");
+      requestAnimationFrame(() => followX(last, false));
+    }
 
     if (state.body.trim() && !opts.cursor) {
       const dc = layout(dateText(c), 20, 2, false).cols[0];
@@ -287,6 +293,19 @@
     if (opts.static) zhe.querySelectorAll(".write").forEach((w) => w.classList.add("go"));
     if (opts.static) zhe.querySelectorAll(".quan").forEach((q) => q.classList.remove("wait"));
   }
+
+  // 只横向滚动折子，让某个元素露出来（不动页面的竖向位置）
+  function followX(node, smooth) {
+    const sc = $("#scroller");
+    if (!node || !sc) return;
+    const a = node.getBoundingClientRect(), b = sc.getBoundingClientRect();
+    const pad = 24;
+    let dx = 0;
+    if (a.left < b.left + pad) dx = a.left - b.left - pad;
+    else if (a.right > b.right - pad) dx = a.right - b.right + pad;
+    if (dx) sc.scrollBy({ left: dx, behavior: smooth && !reduce ? "smooth" : "auto" });
+  }
+  const buzz = (ms) => { try { navigator.vibrate && navigator.vibrate(ms); } catch (e) {} };
 
   let raf = 0;
   const scheduleRender = (opts) => { cancelAnimationFrame(raf); raf = requestAnimationFrame(() => render(opts)); };
@@ -492,6 +511,7 @@
     $("#flowCap").hidden = false;
     flow.classList.remove("out");
     flow.hidden = false;
+    document.body.style.overflow = "hidden";
 
     let res = null;
     askEmperor(c, state.body).then((r) => (res = { ok: true, r }), (e) => (res = { ok: false, e }));
@@ -503,6 +523,7 @@
       if (s.red) lis[i].classList.add("red");
       if (s.time) lis[i].prepend(el("span", "t", s.time));
       art.dataset.st = ART[s.k] || "travel";
+      if (art.dataset.st === "seal" || s.red) buzz(18);
       const liu = res && res.ok && res.r.liuzhong;
       if (s.wait) {
         let j = 0;
@@ -534,6 +555,7 @@
     flow.classList.add("out");
     await sleep(pace(450));
     flow.hidden = true;
+    document.body.style.overflow = "";
     state.busy = false;
     state.reply = res.r;
     reveal();
@@ -544,6 +566,10 @@
     $("#flowErrMsg").textContent = errText(e);
     $("#flowErr").hidden = false;
     state.busy = false;
+  }
+  function closeFlow() {
+    $("#flow").hidden = true;
+    document.body.style.overflow = "";
   }
 
   async function reveal() {
@@ -566,6 +592,7 @@
       await sleep(pace(500));
     }
     for (const b of jps) {
+      followX(b, true);
       writeChars(b, 0.14);
       await sleep(pace(b.children.length * 140 + 300));
     }
@@ -577,7 +604,11 @@
       const nodes = c.emp.tone === "ming" ? [target] : [...document.querySelectorAll(".zhupi")];
       const n = nodes.reduce((a, x) => a + x.querySelectorAll(".ch").length, 0);
       const per = Math.min(0.2, 9 / Math.max(n, 1));
-      nodes.forEach((x) => { delay = writeChars(x, per, delay); });
+      nodes.forEach((x) => {
+        const at = delay;
+        delay = writeChars(x, per, delay);
+        if (at > 0) setTimeout(() => followX(x, true), pace(at * 1000));
+      });
       await sleep(pace(delay * 1000 + 500));
     }
     showResult();
@@ -602,6 +633,7 @@
     $("#baihua").textContent = r.baihua || "";
     $("#note").textContent = r.note ? "史注：" + r.note : "";
     $("#result").hidden = false;
+    buzz([20, 40, 30]);
     $("#result").scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "nearest" });
   }
 
@@ -613,9 +645,16 @@
     try {
       const zhe = $("#zhe");
       const canvas = await html2canvas(zhe, { backgroundColor: "#1b1310", scale: 2, useCORS: true, onclone: (doc) => doc.querySelector("#zhe").classList.add("snap") });
+      const fname = `上奏-${state.c.era}${yearName(state.c.year)}-${state.c.name}.png`;
+      const blob = await new Promise((r) => canvas.toBlob(r, "image/png"));
+      const file = blob && new File([blob], fname, { type: "image/png" });
+      // 手机上走系统分享（可存到相册、发微信）；不支持就直接下载
+      if (file && navigator.canShare && navigator.canShare({ files: [file] })) {
+        try { await navigator.share({ files: [file], title: "上奏" }); return; } catch (e) { if (e && e.name === "AbortError") return; }
+      }
       const a = document.createElement("a");
-      a.download = `上奏-${state.c.era}${yearName(state.c.year)}-${state.c.name}.png`;
-      a.href = canvas.toDataURL("image/png");
+      a.download = fname;
+      a.href = blob ? URL.createObjectURL(blob) : canvas.toDataURL("image/png");
       a.click();
     } finally {
       btn.disabled = false;
@@ -643,8 +682,8 @@
   $("#redraftBtn").addEventListener("click", draft);
   $("#backBtn").addEventListener("click", showSetup);
   $("#submitBtn").addEventListener("click", submit);
-  $("#retryBtn").addEventListener("click", () => { $("#flow").hidden = true; submit(); });
-  $("#cancelBtn").addEventListener("click", () => { $("#flow").hidden = true; state.busy = false; });
+  $("#retryBtn").addEventListener("click", () => { closeFlow(); submit(); });
+  $("#cancelBtn").addEventListener("click", () => { closeFlow(); state.busy = false; });
   $("#editBtn").addEventListener("click", () => {
     const w = $("#editWrap");
     w.hidden = !w.hidden;

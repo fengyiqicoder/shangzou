@@ -2,16 +2,31 @@
 <html lang="zh-CN">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1b1310">
 <title>上奏 · 给嘉靖、康熙、雍正写一道折子</title>
 <meta name="description" content="选一位皇帝，写一道奏折，等一句朱批。按明清真实体例竖排、抬头、朱批，AI 扮演嘉靖、康熙、雍正。">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="上奏">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:url" content="https://shangzou.000ooo.ooo/">
 <meta property="og:title" content="上奏 · 给皇帝写一道折子">
 <meta property="og:description" content="嘉靖批红、康熙朱批、雍正骂人。按明清真实体例，等皇帝亲笔回你。">
+<meta property="og:image" content="https://shangzou.000ooo.ooo/og.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="上奏：一道奏折上写着雍正朱批「朕就是這樣漢子，就是這樣秉性，就是這樣皇帝」">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="上奏 · 给皇帝写一道折子">
+<meta name="twitter:description" content="嘉靖批红、康熙朱批、雍正骂人。按明清真实体例，等皇帝亲笔回你。">
+<meta name="twitter:image" content="https://shangzou.000ooo.ooo/og.jpg">
+<meta name="twitter:image:alt" content="上奏：一道奏折上写着雍正朱批「朕就是這樣漢子，就是這樣秉性，就是這樣皇帝」">
+<link rel="canonical" href="https://shangzou.000ooo.ooo/">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=LXGW+WenKai+TC:wght@400;700&family=Ma+Shan+Zheng&family=Noto+Serif+SC:wght@400;600;900&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=2">
+<link rel="stylesheet" href="style.css?v=4">
 </head>
 <body>
 <header class="top">
@@ -23,15 +38,16 @@
   <section id="setup" class="sheet">
     <h2 class="step"><i>一</i>择主</h2>
     <div class="emperors" id="emperors" role="radiogroup" aria-label="选择皇帝"></div>
+    <p class="emp-note" id="empNote"></p>
 
     <h2 class="step"><i>二</i>具衔</h2>
     <div class="fields">
-      <label>年份<select id="year"></select></label>
-      <label>官职<select id="office"></select></label>
-      <label class="custom-office" hidden>自拟官职<input id="officeCustom" maxlength="16" placeholder="如：杭州府同知"></label>
-      <label>姓名<input id="name" maxlength="6" placeholder="如：海瑞" autocomplete="off"></label>
-      <label class="banner-field">旗籍<select id="banner"><option value="0">汉臣（自称「臣」）</option><option value="1">旗人（自称「奴才」）</option></select></label>
-      <label>文书<select id="doctype"></select></label>
+      <label class="f-year"><span id="yearLabel">年份</span><select id="year"></select></label>
+      <label class="f-office">官职<select id="office"></select></label>
+      <label class="custom-office f-custom" hidden>自拟官职<input id="officeCustom" maxlength="16" placeholder="如：杭州府同知"></label>
+      <label class="f-name">姓名<input id="name" maxlength="6" placeholder="如：海瑞" autocomplete="off" enterkeyhint="done"></label>
+      <label class="banner-field f-banner">旗籍<select id="banner"><option value="0">汉臣 · 称「臣」</option><option value="1">旗人 · 称「奴才」</option></select></label>
+      <label class="f-doc">文书<select id="doctype"></select></label>
     </div>
     <p class="fine" id="docHint"></p>
 
@@ -50,7 +66,7 @@
       <label class="toggle"><input type="checkbox" id="judou" checked> 句读</label>
     </div>
     <div class="scroller" id="scroller"><div class="zhe" id="zhe"></div></div>
-    <p class="scroll-hint">← 折子自右向左展开，可左右拖动</p>
+    <p class="scroll-hint">折子自右向左展开 · 左右滑动看全文</p>
     <div class="edit-wrap" id="editWrap" hidden>
       <textarea id="editText" rows="6"></textarea>
     </div>
@@ -112,10 +128,10 @@
   一个静态页面，AI 由 <a href="https://onetagai.com">OneTag AI</a> 一行 script 提供
 </footer>
 
-<script src="config.js?v=2"></script>
+<script src="config.js?v=4"></script>
 <script src="https://onetagai.com/v1.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" defer></script>
-<script src="data.js?v=2"></script>
-<script src="app.js?v=2"></script>
+<script src="data.js?v=4"></script>
+<script src="app.js?v=4"></script>
 </body>
 </html>
