@@ -54,7 +54,7 @@
 ## 自己部署一份
 
 1. Fork 这个仓库，在 Settings → Pages 里选 main 分支根目录。
-2. `config.js` 里默认是共享的演示 key，每天有总额度。换成你自己的免费 key（一个邮箱一把，100 万 token）：
+2. `config.js` 里是本站自己的 key，额度是本站的。换成你自己的免费 key（一个邮箱一把，100 万 token）：
 
 ```bash
 curl -X POST https://onetagai.com/api/signup -H "Content-Type: application/json" -d '{"email":"you@example.com"}'
